@@ -3,7 +3,11 @@
  *
  * Must be the first file included from index.html
  */
-
+import { BloomFilter } from 'bloom-filters';
+let filter = new BloomFilter(10, 4)
+// insert data
+filter.add('alice')
+filter.add('bob')
 
 var overviewer = {};
 
