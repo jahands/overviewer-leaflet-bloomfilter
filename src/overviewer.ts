@@ -4,12 +4,14 @@
  * Must be the first file included from index.html
  */
 import { BloomFilter } from 'bloom-filters';
-let filter = new BloomFilter(10, 4)
-// insert data
-filter.add('alice')
-filter.add('bob')
+console.log('starting bloom filter');
+import filterJson from './filter.json';
+const filter = BloomFilter.fromJSON(filterJson)
+console.log('has path', filter.has('survivalnightsouth/3/1/3/0/2/0/1/2/1.web1p'))
 
-var overviewer = {};
+
+// var overviewer = {};
+globalThis.overviewer = {}; 
 
 
 /**
@@ -146,8 +148,7 @@ overviewer.util = {
 
                 var ovconf = currTileset.tileSetConfig;
 
-                w_coords = overviewer.util.fromLatLngToWorld(latlng.lat, latlng.lng, ovconf);
-
+                globalThis.w_coords = overviewer.util.fromLatLngToWorld(latlng.lat, latlng.lng, ovconf);
                 var r_x = Math.floor(Math.floor(w_coords.x / 16.0) / 32.0);
                 var r_z = Math.floor(Math.floor(w_coords.z / 16.0) / 32.0);
                 var r_name = "r." + r_x + "." + r_z + ".mca";
@@ -940,6 +941,11 @@ overviewer.util = {
                 }
             }
             url = url + '.' + pathExt;
+            // Make sure the bloom filter includes this
+            if (!filter.has(url)) {
+                console.log('skipping file missing from bloom filter: ' + url);
+                return 'https://';
+            }
             if(typeof overviewerConfig.map.cacheTag !== 'undefined') {
                 url += '?c=' + overviewerConfig.map.cacheTag;
             }

@@ -1,9 +1,19 @@
 {
   "dependencies": {
     "bloom-filters": "^3.0.0",
+    "buffer": "^6.0.3",
+    "esbuild": "^0.14.48",
     "typescript": "^4.7.4"
   },
   "scripts": {
-    "build": "npx tsc --out dist/overviewer.js"
+    "build": "npx esbuild src/overviewer.ts --platform=browser --minify --define:global=window --inject:config/esbuild.inject.js --bundle --outfile=dist/overviewer.js && cp dist/overviewer.js ftb-ultimate-ae-2022",
+    "publish": "npm run build && npx dotenv-run-script upload",
+    "upload": "rclone -v -P copy dist/overviewer.js b2p:$BUCKET/maps/servers/ftb-ultimate-ae-2022 && rclone -v -P copy dist/overviewer.js r2:$BUCKET/maps/servers/ftb-ultimate-ae-2022"
+  },
+  "browser": {
+    "stream": "stream-browserify"
+  },
+  "devDependencies": {
+    "dotenv-run-script": "^0.2.0"
   }
 }
